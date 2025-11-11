@@ -21,6 +21,6 @@ for EXP_DIR in "$BASE_DIR"/*/; do
 
     # Ejecutar para precision
     echo "  Ejecutando Judge (precision)..."
-    python3 judge.py --cache_dir "$CACHE" --folder "$EXP_DIR" --output "$OUT_PRECISION" --metric precision
+    python3 judge.py --cache_dir "$CACHE" --dataset "$QUESTIONS" --folder "$EXP_DIR" --output "$OUT_PRECISION" --metric precision
     cd ..
 done
