@@ -1,0 +1,563 @@
+<!DOCTYPE html>
+<html lang="gl">
+<head>
+<meta charset="UTF-8">
+<title>Editor de Dataset Anuncios RAG</title>
+<style>
+  body { 
+    font-family: sans-serif; 
+    margin: 0;
+    padding: 0;
+    height: 100vh;
+    display: flex;
+    flex-direction: column;
+  }
+  .header {
+    padding: 15px 20px;
+    background: #f0f0f0;
+    border-bottom: 2px solid #ddd;
+    flex-shrink: 0;
+  }
+  .header h1 {
+    margin: 0 0 10px 0;
+    font-size: 1.5em;
+  }
+  .header-content {
+    display: flex;
+    gap: 20px;
+    align-items: flex-start;
+  }
+  .file-inputs {
+    display: flex;
+    gap: 20px;
+    flex: 1;
+  }
+  .file-input-group {
+    flex: 1;
+  }
+  .file-input-group label {
+    display: block;
+    font-weight: bold;
+    margin-bottom: 5px;
+    font-size: 0.9em;
+  }
+  .file-input-group input {
+    width: 100%;
+    font-size: 0.85em;
+  }
+  .file-input-group small {
+    display: block;
+    margin-top: 3px;
+    color: #666;
+    font-size: 0.75em;
+  }
+  .loaded-files {
+    padding: 8px;
+    background: white;
+    border: 1px solid #ddd;
+    border-radius: 4px;
+    font-size: 0.85em;
+    max-width: 300px;
+  }
+  .file-tag {
+    display: inline-block;
+    padding: 3px 8px;
+    margin: 2px;
+    background: #007bff;
+    color: white;
+    border-radius: 3px;
+    font-size: 0.8em;
+  }
+  .stat-info {
+    padding: 8px 10px;
+    background: #e8f4f8;
+    border-radius: 4px;
+    font-size: 0.85em;
+    max-width: 300px;
+  }
+  .main-content {
+    flex: 1;
+    overflow: hidden;
+    display: flex;
+  }
+  .editor {
+    flex: 0 0 40%;
+    overflow-y: auto;
+    padding: 20px;
+    background: white;
+  }
+  .questions-answers-column {
+    flex: 0 0 60%;
+    overflow-y: auto;
+    padding: 20px;
+    background: #f9f9f9;
+    border-left: 2px solid #ddd;
+  }
+  .field-group {
+    margin-bottom: 15px;
+  }
+  .field-label {
+    font-weight: bold;
+    margin-bottom: 5px;
+    display: block;
+    font-size: 0.9em;
+  }
+  textarea { 
+    width: 100%; 
+    resize: vertical;
+    font-family: monospace;
+    padding: 8px;
+    border: 1px solid #ccc;
+    border-radius: 4px;
+    font-size: 1em;
+  }
+  #contextField { height: 150px; }
+  .nav { 
+    margin: 15px 0 0 0; 
+    padding: 10px;
+    background: #f8f8f8;
+    border-radius: 4px;
+    display: flex;
+    gap: 8px;
+    align-items: center;
+    flex-wrap: wrap;
+  }
+  button {
+    padding: 6px 12px;
+    background: #007bff;
+    color: white;
+    border: none;
+    border-radius: 4px;
+    cursor: pointer;
+    font-size: 13px;
+  }
+  button:hover {
+    background: #0056b3;
+  }
+  button:disabled {
+    background: #ccc;
+    cursor: not-allowed;
+  }
+  .jump-section {
+    display: flex;
+    gap: 8px;
+    align-items: center;
+  }
+  #fileSelector {
+    padding: 6px;
+    border: 1px solid #ccc;
+    border-radius: 4px;
+    background: white;
+    min-width: 180px;
+    font-size: 0.85em;
+  }
+  #idJumpInput {
+    width: 80px;
+    padding: 6px;
+    border: 1px solid #ccc;
+    border-radius: 4px;
+    font-size: 0.85em;
+  }
+  .info {
+    flex-grow: 1;
+    text-align: center;
+    font-weight: bold;
+    font-size: 0.9em;
+  }
+  .array-item {
+    margin: 5px 0;
+    padding: 8px;
+    background: #f9f9f9;
+    border-left: 3px solid #007bff;
+    position: relative;
+  }
+  .array-item textarea {
+    width: calc(100% - 70px);
+    min-height: 35px;
+    font-size: 0.95em;
+  }
+  .array-item button {
+    position: absolute;
+    right: 8px;
+    top: 8px;
+    padding: 3px 7px;
+    font-size: 11px;
+    background: #dc3545;
+  }
+  .add-button {
+    background: #28a745;
+    margin-top: 8px;
+    font-size: 12px;
+    padding: 5px 10px;
+  }
+  .add-button:hover {
+    background: #218838;
+  }
+  .stat-info {
+    padding: 10px;
+    background: #e8f4f8;
+    border-radius: 4px;
+    margin-bottom: 10px;
+  }
+</style>
+</head>
+<body>
+
+<div class="header">
+  <h1>Editor de Dataset Anuncios RAG</h1>
+  
+  <div class="header-content">
+    <div class="file-inputs">
+      <div class="file-input-group">
+        <label for="fileInput">📄 Cargar ficheiros JSON</label>
+        <input type="file" id="fileInput" multiple accept=".json">
+        <small>Selecciona múltiples ficheiros</small>
+      </div>
+
+      <div class="file-input-group">
+        <label for="folderInput">📁 Ou cargar carpeta</label>
+        <input type="file" id="folderInput" webkitdirectory directory multiple>
+        <small>Carga todos os JSON dunha carpeta</small>
+      </div>
+    </div>
+
+    <div class="loaded-files" id="loadedFiles" style="display:none;">
+      <b>Ficheiros:</b>
+      <div id="filesList"></div>
+    </div>
+
+    <div class="stat-info" id="statsInfo" style="display:none;"></div>
+  </div>
+</div>
+
+<div class="main-content" id="mainContent" style="display:none;">
+  <div class="editor">
+    <div class="field-group">
+      <span class="field-label">ID: <span id="idField"></span> | Ficheiro: <span id="sourceFileField"></span></span>
+    </div>
+
+    <div class="field-group">
+      <label class="field-label">Contexto:</label>
+      <textarea id="contextField"></textarea>
+    </div>
+
+    <div class="nav">
+      <button id="prevBtn">← Anterior</button>
+      <button id="nextBtn">Seguinte →</button>
+      <div class="jump-section">
+        <select id="fileSelector">
+          <option value="">Todos os ficheiros</option>
+        </select>
+        <input type="number" id="idJumpInput" placeholder="ID...">
+        <button id="idJumpBtn">Buscar</button>
+      </div>
+      <div class="info" id="positionInfo"></div>
+      <button id="downloadBtn">⬇️ Descargar ficheiros</button>
+    </div>
+  </div>
+
+  <div class="questions-answers-column">
+    <div class="field-group">
+      <label class="field-label">Preguntas:</label>
+      <div id="questionsContainer"></div>
+      <button class="add-button" id="addQuestionBtn">+ Engadir pregunta</button>
+    </div>
+
+    <div class="field-group" style="margin-top: 25px;">
+      <label class="field-label">Respostas:</label>
+      <div id="answersContainer"></div>
+      <button class="add-button" id="addAnswerBtn">+ Engadir resposta</button>
+    </div>
+  </div>
+</div>
+
+<script>
+let allData = []; // Array with all questions from all files
+let fileMapping = {}; // Map to track which file each question belongs to
+let currentIndex = 0;
+
+function loadFiles(files) {
+  if (!files || files.length === 0) return;
+  
+  // Filter only JSON files
+  const jsonFiles = Array.from(files).filter(file => 
+    file.name.toLowerCase().endsWith('.json')
+  );
+  
+  if (jsonFiles.length === 0) {
+    alert('Non se atoparon ficheiros JSON na selección');
+    return;
+  }
+  
+  allData = [];
+  fileMapping = {};
+  let filesProcessed = 0;
+  const fileNames = [];
+
+  jsonFiles.forEach(file => {
+    const reader = new FileReader();
+    reader.onload = function(e) {
+      try {
+        const fileData = JSON.parse(e.target.result);
+        const fileName = file.name;
+        fileNames.push(fileName);
+        
+        // Add each question to allData with file reference
+        fileData.forEach(item => {
+          const itemWithFile = { ...item, _sourceFile: fileName };
+          allData.push(itemWithFile);
+          if (!fileMapping[fileName]) {
+            fileMapping[fileName] = [];
+          }
+          fileMapping[fileName].push(item);
+        });
+        
+        filesProcessed++;
+        
+        // When all files are loaded
+        if (filesProcessed === jsonFiles.length) {
+          // Sort by file name first, then by ID within each file
+          allData.sort((a, b) => {
+            if (a._sourceFile !== b._sourceFile) {
+              return a._sourceFile.localeCompare(b._sourceFile);
+            }
+            return a.id - b.id;
+          });
+          
+          currentIndex = 0;
+          document.getElementById('mainContent').style.display = 'flex';
+          document.getElementById('loadedFiles').style.display = 'block';
+          document.getElementById('statsInfo').style.display = 'block';
+          
+          // Populate file selector dropdown
+          const fileSelector = document.getElementById('fileSelector');
+          fileSelector.innerHTML = '<option value="">Todos os ficheiros</option>' +
+            Object.keys(fileMapping).sort().map(fileName => 
+              `<option value="${fileName}">${fileName}</option>`
+            ).join('');
+          
+          // Show loaded files
+          document.getElementById('filesList').innerHTML = fileNames
+            .map(name => `<span class="file-tag">${name}</span>`)
+            .join('');
+          
+          // Show stats
+          document.getElementById('statsInfo').innerHTML = 
+            `<b>Total de preguntas:</b> ${allData.length} | <b>Ficheiros:</b> ${Object.keys(fileMapping).length}`;
+          
+          showRecord();
+        }
+      } catch (err) {
+        alert(`Erro ao ler o ficheiro ${file.name}: ${err.message}`);
+      }
+    };
+    reader.readAsText(file);
+  });
+}
+
+document.getElementById('fileInput').addEventListener('change', function(e) {
+  loadFiles(e.target.files);
+});
+
+document.getElementById('folderInput').addEventListener('change', function(e) {
+  loadFiles(e.target.files);
+});
+
+function createArrayItemHTML(value, index, type) {
+  return `
+    <div class="array-item" data-index="${index}">
+      <textarea class="${type}-item" data-index="${index}">${value}</textarea>
+      <button onclick="removeArrayItem('${type}', ${index})">✕</button>
+    </div>
+  `;
+}
+
+function showRecord() {
+  const item = allData[currentIndex];
+  
+  document.getElementById('idField').textContent = item.id;
+  document.getElementById('sourceFileField').textContent = item._sourceFile;
+  document.getElementById('contextField').value = item.context || '';
+  
+  // Show questions
+  const questionsContainer = document.getElementById('questionsContainer');
+  questionsContainer.innerHTML = item.question
+    .map((q, i) => createArrayItemHTML(q, i, 'question'))
+    .join('');
+  
+  // Show answers
+  const answersContainer = document.getElementById('answersContainer');
+  answersContainer.innerHTML = item.answer
+    .map((a, i) => createArrayItemHTML(a, i, 'answer'))
+    .join('');
+  
+  // Update navigation info
+  document.getElementById('positionInfo').textContent = 
+    `Pregunta ${currentIndex + 1} de ${allData.length}`;
+  
+  // Update button states
+  document.getElementById('prevBtn').disabled = currentIndex === 0;
+  document.getElementById('nextBtn').disabled = currentIndex === allData.length - 1;
+}
+
+function removeArrayItem(type, index) {
+  const item = allData[currentIndex];
+  const arrayName = type === 'question' ? 'question' : 'answer';
+  
+  if (item[arrayName].length <= 1) {
+    alert(`Non podes eliminar a última ${type === 'question' ? 'pregunta' : 'resposta'}!`);
+    return;
+  }
+  
+  item[arrayName].splice(index, 1);
+  showRecord();
+}
+
+document.getElementById('addQuestionBtn').onclick = function() {
+  const item = allData[currentIndex];
+  item.question.push('');
+  showRecord();
+  // Focus on the new question
+  const newItems = document.querySelectorAll('.question-item');
+  if (newItems.length > 0) {
+    newItems[newItems.length - 1].focus();
+  }
+};
+
+document.getElementById('addAnswerBtn').onclick = function() {
+  const item = allData[currentIndex];
+  item.answer.push('');
+  showRecord();
+  // Focus on the new answer
+  const newItems = document.querySelectorAll('.answer-item');
+  if (newItems.length > 0) {
+    newItems[newItems.length - 1].focus();
+  }
+};
+
+function saveCurrentRecord() {
+  const item = allData[currentIndex];
+  
+  // Save questions
+  const questionItems = document.querySelectorAll('.question-item');
+  item.question = Array.from(questionItems).map(el => el.value.trim()).filter(v => v);
+  
+  // Save answers
+  const answerItems = document.querySelectorAll('.answer-item');
+  item.answer = Array.from(answerItems).map(el => el.value.trim()).filter(v => v);
+  
+  // Save context
+  item.context = document.getElementById('contextField').value;
+  
+  // Validation
+  if (item.question.length === 0) {
+    alert('Debe haber polo menos unha pregunta!');
+    return false;
+  }
+  if (item.answer.length === 0) {
+    alert('Debe haber polo menos unha resposta!');
+    return false;
+  }
+  
+  return true;
+}
+
+document.getElementById('prevBtn').onclick = function() {
+  if (saveCurrentRecord() && currentIndex > 0) { 
+    currentIndex--; 
+    showRecord(); 
+  }
+};
+
+document.getElementById('nextBtn').onclick = function() {
+  if (saveCurrentRecord() && currentIndex < allData.length - 1) { 
+    currentIndex++; 
+    showRecord(); 
+  }
+};
+
+document.getElementById('downloadBtn').onclick = function() {
+  if (!saveCurrentRecord()) return;
+  
+  // Reconstruct files
+  const filesData = {};
+  allData.forEach(item => {
+    const fileName = item._sourceFile;
+    if (!filesData[fileName]) {
+      filesData[fileName] = [];
+    }
+    // Remove the _sourceFile property before saving
+    const cleanItem = { ...item };
+    delete cleanItem._sourceFile;
+    filesData[fileName].push(cleanItem);
+  });
+  
+  // Download each file
+  Object.keys(filesData).forEach(fileName => {
+    // Sort by ID
+    filesData[fileName].sort((a, b) => a.id - b.id);
+    
+    const blob = new Blob([JSON.stringify(filesData[fileName], null, 2)], {type: 'application/json'});
+    const url = URL.createObjectURL(blob);
+    const a = document.createElement('a');
+    a.href = url;
+    a.download = fileName;
+    a.click();
+    URL.revokeObjectURL(url);
+  });
+  
+  alert(`Descargados ${Object.keys(filesData).length} ficheiros!`);
+};
+
+document.getElementById('idJumpBtn').onclick = function() {
+  const selectedFile = document.getElementById('fileSelector').value;
+  const idValue = parseInt(document.getElementById('idJumpInput').value);
+  
+  if (isNaN(idValue)) {
+    alert('Por favor, introduce un ID válido');
+    return;
+  }
+  
+  let foundIndex = -1;
+  
+  if (selectedFile === '') {
+    // Search in all files - find first occurrence
+    foundIndex = allData.findIndex(item => item.id === idValue);
+  } else {
+    // Search only in selected file
+    foundIndex = allData.findIndex(item => 
+      item.id === idValue && item._sourceFile === selectedFile
+    );
+  }
+  
+  if (foundIndex >= 0) {
+    if (saveCurrentRecord()) {
+      currentIndex = foundIndex;
+      showRecord();
+    }
+  } else {
+    if (selectedFile === '') {
+      alert(`ID ${idValue} non atopado en ningún ficheiro`);
+    } else {
+      alert(`ID ${idValue} non atopado no ficheiro ${selectedFile}`);
+    }
+  }
+};
+
+// Keyboard shortcuts
+document.addEventListener('keydown', function(e) {
+  // Ctrl/Cmd + Right Arrow = Next
+  if ((e.ctrlKey || e.metaKey) && e.key === 'ArrowRight') {
+    e.preventDefault();
+    document.getElementById('nextBtn').click();
+  }
+  // Ctrl/Cmd + Left Arrow = Previous
+  if ((e.ctrlKey || e.metaKey) && e.key === 'ArrowLeft') {
+    e.preventDefault();
+    document.getElementById('prevBtn').click();
+  }
+});
+</script>
+
+</body>
+</html>
