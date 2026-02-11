@@ -5,7 +5,7 @@ database:
   chunk_size: 2000
   chunk_overlap: 200
   elastic_index: praza_qwen_bge-m3_chunked
-  elastic_config_file: /home/compartido/pabloF/nos-rag-eval/rag_retriever/configs/config_elastic.yaml
+  elastic_config_file: /home/compartido/pabloF/nos-rag-eval/elasticsearch/config_elastic.yaml
 
 retriever:
   embedding_model: BAAI/bge-m3  # Embedding model to use

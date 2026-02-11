@@ -43,14 +43,6 @@ class RAG:
                                                   cache_folder=self.config.general_config.hf_cache_dir)
             embedding_model.to('cuda' if torch.cuda.is_available() else 'cpu')
 
-        # vectorstore = ElasticsearchStore(
-        #         es_url=elastic_config.endpoint,
-        #         es_user=elastic_config.username,
-        #         es_password=elastic_config.password,
-        #         index_name=elastic_config.elastic_index,
-        #         strategy=retrieval_strategy,
-        # )
-
         #https://python.langchain.com/docs/integrations/retrievers/elasticsearch_retriever/
         def bm25_query(search_query: str) -> Dict:
             return {
@@ -121,35 +113,3 @@ class RAG:
             initial_docs_info.append(source_data)
 
         return source_info, initial_docs_info
-
-if __name__ == "__main__":
-    # Print the configuration for debugging
-    pp = pprint.PrettyPrinter(indent=4)
-    rag = RAG("configs/config_default.yaml")
-    pp.pprint(rag.config.__dict__)
-    print("Asistente RAG en Galego (escriba 'sair' para rematar)")
-    while True:
-        user_input = input("\nUsuario: ")
-        if user_input.lower() in ["sair", "quit", "exit"]:
-            print("Grazas por usar o asistente!")
-            break
-            
-        # Get response from RAG system
-        sources, initial_docs_info= rag.retrieve_contexts(
-            user_input
-        )
-        print_sources = True
-        if print_sources:
-            print("\n--- Fragmentos empregados ---")
-            for source in sources:
-                #print(source)
-                source_id = source["id"]
-                content = source["content"]
-                metadata = source["metadata"]["_source"]
-                # If you have source info in metadata, you can display it
-                source_file = metadata.get("source_id",f"Praza-{metadata.get('published_on')}")
-                
-                print(f"\nFragmento {source_id} - {source_file}")
-                print("-" * 40)
-                print(content)
-                print("-" * 40)
