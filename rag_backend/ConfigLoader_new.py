@@ -24,8 +24,8 @@ class DatabaseConfig:
 @dataclass
 class RetrieverConfig:
     retrieval_strategy: str
-    initial_retrieve_count: int
-    query_top_k: int
+    num_docs_retrieval: int
+    num_docs_reranker: int
     embedding_model: Optional[str] = None
 
 @dataclass
@@ -86,8 +86,8 @@ class _GeneralConfig:
 @dataclass
 class _RetrieverDefaults:
     retrieval_strategy: str
-    initial_retrieve_count: int
-    query_top_k: int
+    num_docs_retrieval: int
+    num_docs_reranker: int
 
 @dataclass
 class _EmbedderConfig:
@@ -119,8 +119,8 @@ class ExperimentConfig:
     embedding_model: Optional[str]
     elastic_index: str
     retrieval_strategy: str
-    initial_retrieve_count: int
-    query_top_k: int
+    num_docs_reranker: int
+    num_docs_retrieval: int
     use_reranking: bool
     reranker_model: Optional[str]
 
@@ -143,8 +143,8 @@ class ExperimentConfig:
         return SimpleNamespace(
             embedding_model=self.embedding_model,
             retrieval_strategy=self.retrieval_strategy,
-            initial_retrieve_count=self.initial_retrieve_count,
-            query_top_k=self.query_top_k
+            num_docs_retrieval=self.num_docs_retrieval,
+            num_docs_reranker=self.num_docs_reranker
         )
 
     @property
@@ -184,8 +184,8 @@ class ExperimentsLoader:
                 embedding_model=emb.embedding_model,
                 elastic_index=emb.elastic_index,
                 retrieval_strategy=emb.retrieval_strategy or defaults.retrieval_strategy,
-                initial_retrieve_count=defaults.initial_retrieve_count,
-                query_top_k=defaults.query_top_k,
+                num_docs_retrieval=defaults.num_docs_retrieval,
+                num_docs_reranker=defaults.num_docs_reranker,
                 use_reranking=rer.use_reranking,
                 reranker_model=rer.reranker_model,
             ))

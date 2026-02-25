@@ -1,0 +1,100 @@
+general_config:
+  hf_cache_dir: /home/compartido/pabloF/cache
+  elastic_config_file: /home/compartido/pabloF/nos-rag-eval/rag_retriever/configs/config_elastic.yaml
+
+retriever_defaults:
+  retrieval_strategy: SIMILARITY # used when the embedder does not override it
+  initial_retrieve_count: 10
+  query_top_k: 3
+
+embedders:
+  - name: bm25
+    retrieval_strategy: BM25
+    elastic_index: no_embedding_paragraph
+  - name: qwen3
+    embedding_model: Qwen/Qwen3-Embedding-0.6B
+    elastic_index: qwen3_paragraph
+  - name: granite
+    embedding_model: ibm-granite/granite-embedding-english-r2
+    elastic_index: granite-english-r2_paragraph
+  - name: gemma
+    embedding_model: google/embeddinggemma-300m
+    elastic_index: gemma-300m_paragraph
+  - name: all-minilm
+    embedding_model: sentence-transformers/all-MiniLM-L6-v2
+    elastic_index: all_minilm_l6_v2_paragraph
+  - name: bge-m3
+    embedding_model: BAAI/bge-m3
+    elastic_index: bge_m3_paragraph
+
+rerankers:
+  - name: none
+  - name: qwen
+    reranker_model: Qwen/Qwen3-Reranker-0.6B
+  - name: jina
+    reranker_model: jinaai/jina-reranker-v3
+  - name: bge
+    reranker_model: BAAI/bge-reranker-v2-m3
+
+# Optional: define specific combinations to run.
+# If this section is omitted, all embedder x reranker combinations are run.
+experiments:
+  #BM25
+  - embedder: bm25
+    reranker: none
+  - embedder: bm25
+    reranker: qwen
+  - embedder: bm25
+    reranker: jina
+  - embedder: bm25
+    reranker: bge
+
+  #Qwen3 Retriever
+  - embedder: qwen3
+    reranker: none
+  - embedder: qwen3
+    reranker: qwen
+  - embedder: qwen3
+    reranker: jina
+  - embedder: qwen3
+    reranker: bge
+
+  #Granite-Embedding Retriever
+  - embedder: granite
+    reranker: none
+  - embedder: granite
+    reranker: qwen
+  - embedder: granite
+    reranker: jina
+  - embedder: granite
+    reranker: bge
+
+ #gemma Retriever
+  - embedder: gemma
+    reranker: none
+  - embedder: gemma
+    reranker: qwen
+  - embedder: gemma
+    reranker: jina
+  - embedder: gemma
+    reranker: bge
+
+  #all-minilm Retriever
+  - embedder: all-minilm
+    reranker: none
+  - embedder: all-minilm
+    reranker: qwen
+  - embedder: all-minilm
+    reranker: jina
+  - embedder: all-minilm
+    reranker: bge
+
+ #bge-m3 Embedding Retriever
+  - embedder: bge-m3
+    reranker: none
+  - embedder: bge-m3
+    reranker: qwen
+  - embedder: bge-m3
+    reranker: jina
+  - embedder: bge-m3
+    reranker: bge

@@ -5,7 +5,7 @@ import os
 import json
 from tqdm import tqdm
 
-from rag_retriever.rag_retriever import RAG
+from rag_backend.rag_retriever import RAG
 from utils.dataloader_evaluation import load_questions_with_metadata
 
 parser = argparse.ArgumentParser(description="Generate test set with RAG retriever.")
@@ -52,12 +52,16 @@ try:
         if idx in processed_ids:
             continue    
         query = item['question']
-
+        relevant_docs = []
         try:
-            relevant_docs, _ = rag.retrieve_contexts(query)
+            relevant_docs = rag.retrieve_contexts(query)
+        except Exception as e:
+            print(f"Error retrieving contexts for query {idx}: {str(e)}")
+        
+        try:
             retrieved_contexts = []
             for doc in relevant_docs:
-                metadata = doc["metadata"]["_source"]
+                metadata = doc.get('metadata', {})
                 retrieved_contexts.append({
                     "context": doc["content"],
                     "score": doc["score"],
@@ -68,6 +72,7 @@ try:
                         "paragraph_position": metadata.get("relative_chunk_id", None),
                     }
                 })
+                print(f"Retrieved context for query {idx}: {doc['content'][:100]}... with score {doc['score']} and metadata {metadata}")
             # Create new result
             new_result = {
                 "id": idx,
@@ -85,7 +90,7 @@ try:
                 json.dump(results, f, ensure_ascii=False, indent=2)
                 
         except Exception as e:
-            print(f"Error processing item {idx}: {str(e)}")
+            print(f"Error during the conversion of item {idx}: {str(e)}")
             continue
 
 except KeyboardInterrupt:

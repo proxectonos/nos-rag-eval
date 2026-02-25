@@ -17,8 +17,8 @@ class DatabaseConfig:
 @dataclass
 class RetrieverConfig:
     retrieval_strategy: str
-    initial_retrieve_count: int
-    query_top_k: int
+    num_docs_retrieval: int
+    num_docs_reranker: int
     embedding_model: Optional[str] = None
 
 @dataclass
