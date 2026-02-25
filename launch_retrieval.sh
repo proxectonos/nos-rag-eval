@@ -3,7 +3,7 @@
 source /home/compartido/pabloF/load_env.sh
 
 CONFIGS=/home/compartido/pabloF/nos-rag-eval/rag_retriever/configs/experiments
-QUESTIONS=/home/compartido/pabloF/nos-rag-eval/datasets/Questions/nos-rag-dataset_questions.json
+QUESTIONS=/home/compartido/pabloF/nos-rag-eval/datasets/News/Questions/nos-rag-dataset_questions.json
 
 for i in {1..10}; do
     echo "=== Run $i ==="

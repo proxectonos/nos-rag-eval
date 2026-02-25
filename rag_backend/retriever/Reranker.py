@@ -171,5 +171,4 @@ class Reranker:
         else:
             scored_docs = list(zip(docs, scores))
             scored_docs.sort(key=lambda x: x[1], reverse=True)
-
         return scored_docs
