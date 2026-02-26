@@ -1,22 +1,25 @@
 from elasticsearch import Elasticsearch
 from sentence_transformers import SentenceTransformer
-from rag_backend.ConfigLoader import ConfigLoader
+from utils.ConfigLoader import ConfigLoader, ExperimentConfig
 from rag_backend.retriever.Reranker import Reranker
 from rag_backend.retriever.Retriever import Retriever
 import torch
-from typing import Dict
+from typing import Dict, Union
 from enum import Enum
 import pprint
 
 
 class RAG:
-    def __init__(self, config_file):
+    def __init__(self, config: Union[str, ExperimentConfig]):
         """
         Initialize the Retriever and Reranker mode.
         """
         # Initialize retriever
         print("Initializing retriever...")
-        self.config = ConfigLoader.load(config_file)
+        if isinstance(config, str):
+            self.config = ConfigLoader.load(config)
+        else:
+            self.config = config
         self.elastic_config = ConfigLoader.load_elastic(self.config.database.elastic_config_file)
         self.retriever = self.__initialize_retriever()
         print("RAG system initialized successfully.")

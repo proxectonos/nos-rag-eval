@@ -2,7 +2,10 @@
 
 source /home/compartido/pabloF/load_env.sh
 
-CONFIGS=/home/compartido/pabloF/nos-rag-eval/rag_backend/configs/experiments
+#CONFIGS=/home/compartido/pabloF/nos-rag-eval/rag_backend/configs/experiments
+CONFIGS=/home/compartido/pabloF/nos-rag-eval/experiments/test_experiments.yaml
 QUESTIONS=/home/compartido/pabloF/nos-rag-eval/datasets/News/Questions/nos-rag-dataset_questions.json
 
-python3 generate_testset.py --dataset $QUESTIONS --config $CONFIGS/bm25.yaml --run-id 1
+for i in {1..10}; do
+    python3 generate_testset.py --dataset $QUESTIONS --config $CONFIGS --run-id $i
+done

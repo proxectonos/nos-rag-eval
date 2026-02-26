@@ -4,7 +4,6 @@ from itertools import product
 from types import SimpleNamespace
 import yaml
 
-
 # ---------------------------------------------------------------------------
 # Original dataclasses — kept for backward compatibility with any code
 # that still uses ConfigLoader.load() with the old per-experiment YAMLs.
@@ -178,7 +177,7 @@ class ExperimentsLoader:
             emb = embedders[emb_name]
             rer = rerankers[rer_name]
             experiments.append(ExperimentConfig(
-                name=f"{emb_name} + {rer_name}",
+                name=f"{emb_name}_{rer_name}",
                 hf_cache_dir=general.hf_cache_dir,
                 elastic_config_file=general.elastic_config_file,
                 embedding_model=emb.embedding_model,

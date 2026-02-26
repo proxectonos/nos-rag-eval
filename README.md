@@ -11,14 +11,14 @@ The **Nós RAG Evaluation Tool** provides a framework to evaluate retrieval-augm
 
 ## Project Structure
 - **datasets/**: Contains datasets used for evaluation.  
-  - **News/**: Directory for news datasets.  
-  - **Questions/**: Directory for question datasets.  
+  - **News/**: Press evaluation dataset.  
+  - **DOG/**: DOG evaluation dataset.  
   - **Visualization_Tools/**: Tools for editing and visualizing datasets during manual revision.  
-- **elasticsearch/**: Scripts for creating and managing Elasticsearch indices, including index configuration examples.  
+- **elasticsearch/**: Scripts for creating and managing Elasticsearch indices, including index configuration examples. 
+- **experiments**:  YAML files for defining experiments.
 - **ir-metrics/**: Implements traditional IR metrics for evaluation.  
 - **llm-as-judge/**: Evaluation scripts using an LLM as a judge.  
-- **rag_retriever/**: Implements the RAG system, including context retrieval and reranking logic. Stores experiment configurations.  
-- **results/**: Stores evaluation outputs.  
+- **rag_backend/**: Implements the RAG system, including context retrieval and reranking logic. Stores experiment configurations.   
 - **utils/**: Utility functions for loading and processing datasets.  
 
 Each directory includes scripts and configuration files with examples to facilitate reproducibility.
@@ -33,25 +33,25 @@ The following diagram illustrates the main workflow of the Nós RAG Evaluation T
 
 ### Prerequisites
 - Python 3.9+  
-- [Elasticsearch](https://www.elastic.co/elasticsearch/) running locally or remotely.
-- Install required Python dependencies (see `requirements1.txt` and `requirements2.txt`)  
+- [Elasticsearch](https://www.elastic.co/elasticsearch/) running in the official Docker installation.
+
+### Instalation
+Execute `sh install.sh` 
 
 ---
 
 ### 1. Create Elasticsearch Index
 Make sure Elasticsearch is running, then create the index:  
 ```bash
-sh launch_es_index_creation.sh
+cd elasticsearch
+sh launch_indexing.sh
 ```
 
 ---
 
 ### 2. Configure the Experiment
 Choose the configuration for your experiment, selecting the index, retrieval model, and reranker.  
-Example configurations are available in:  
-```
-rag_retriever/configs/experiments/
-```
+Example configurations are available in `experiments/all_experiments.yaml`
 
 ---
 
