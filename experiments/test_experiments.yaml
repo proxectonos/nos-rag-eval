@@ -1,6 +1,7 @@
 general_config:
   hf_cache_dir: /home/compartido/pabloF/cache
-  elastic_config_file: /home/compartido/pabloF/nos-rag-eval/elasticsearch/config_elastic.yaml
+  elastic_config_file: /home/compartido/pabloF/nos-rag-eval/es_utils/config_elastic.yaml
+  dataset_name: press #press/dog
 
 retriever_defaults:
   retrieval_strategy: SIMILARITY # used when the embedder does not override it
@@ -57,38 +58,38 @@ experiments:
   # - embedder: qwen3
   #   reranker: bge
 
-  - embedder: granite
-    reranker: none
-  - embedder: granite
-    reranker: qwen
-  - embedder: granite
-    reranker: jina
-  - embedder: granite
-    reranker: bge
-
-  - embedder: gemma
-    reranker: none
-  - embedder: gemma
-    reranker: qwen
-  - embedder: gemma
-    reranker: jina
-  - embedder: gemma
-    reranker: bge
-
-  # - embedder: all-minilm
+  # - embedder: granite
   #   reranker: none
-  # - embedder: all-minilm
+  # - embedder: granite
   #   reranker: qwen
-  # - embedder: all-minilm
+  # - embedder: granite
   #   reranker: jina
-  # - embedder: all-minilm
+  # - embedder: granite
   #   reranker: bge
 
-  - embedder: bge-m3
-    reranker: none
-  - embedder: bge-m3
-    reranker: qwen
-  - embedder: bge-m3
-    reranker: jina
-  - embedder: bge-m3
-    reranker: bge
+  # - embedder: gemma
+  #   reranker: none
+  # - embedder: gemma
+  #   reranker: qwen
+  # - embedder: gemma
+  #   reranker: jina
+  # - embedder: gemma
+  #   reranker: bge
+
+  # # - embedder: all-minilm
+  # #   reranker: none
+  # # - embedder: all-minilm
+  # #   reranker: qwen
+  # # - embedder: all-minilm
+  # #   reranker: jina
+  # # - embedder: all-minilm
+  # #   reranker: bge
+
+  # - embedder: bge-m3
+  #   reranker: none
+  # - embedder: bge-m3
+  #   reranker: qwen
+  # - embedder: bge-m3
+  #   reranker: jina
+  # - embedder: bge-m3
+  #   reranker: bge

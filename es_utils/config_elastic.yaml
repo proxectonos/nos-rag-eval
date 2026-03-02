@@ -1,0 +1,4 @@
+username: elastic
+password: QoRIm4-1j1u-bFkLFuU_
+elastic_url: http://localhost:5601 # Not work with https, only with http
+api_endpoint: http://localhost:9202

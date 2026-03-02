@@ -1,0 +1,29 @@
+{
+    "index_name": "embedding_index",
+    "mapping" : {
+        "mappings": {
+            "properties": {
+                "id": {"type": "keyword"},
+                "type": {"type": "keyword"},
+                "source": {"type": "keyword"},
+                "source_id": {"type": "keyword"},
+                "published_on": {"type": "date", "format": "yyyy-MM-dd HH:mm:ss"},
+                "headline": {
+                    "type": "text",
+                    "analyzer": "standard",
+                    "fields": {"keyword": {"type": "keyword"}}
+                },
+                "section": {"type": "keyword"},
+                "topic": {"type": "keyword"},
+                "summary": {"type": "text", "analyzer": "standard"},
+                "text": {"type": "text", "analyzer": "standard"},
+                "text_embedding":{"type":"dense_vector", "dims":1024},
+                "relative_chunk_id": {"type": "integer"},
+                "total_chunks": {"type": "integer"},
+                "num_words": {"type": "integer"},
+                "pyplexity_score": {"type": "float"},
+                "lang": {"type": "keyword"}
+            }
+        } 
+    }
+}
