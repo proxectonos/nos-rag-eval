@@ -14,7 +14,7 @@ The **Nós RAG Evaluation Tool** provides a framework to evaluate retrieval-augm
   - **News/**: Press evaluation dataset.  
   - **DOG/**: DOG evaluation dataset.  
   - **Visualization_Tools/**: Tools for editing and visualizing datasets during manual revision.  
-- **elasticsearch/**: Scripts for creating and managing Elasticsearch indices, including index configuration examples. 
+- **es_utils/**: Scripts for creating and managing Elasticsearch indices, including index configuration examples. 
 - **experiments**:  YAML files for defining experiments.
 - **ir-metrics/**: Implements traditional IR metrics for evaluation.  
 - **llm-as-judge/**: Evaluation scripts using an LLM as a judge.  
