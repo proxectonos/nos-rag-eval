@@ -9,9 +9,6 @@ import argparse
 import yaml
 
 def load_elastic_config(file_path='config_elastic.yaml'):
-    """
-    Loads configuration from a YAML file without error handling.
-    """
     with open(file_path, 'r') as file:
         return yaml.safe_load(file)
 
