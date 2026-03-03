@@ -158,7 +158,7 @@ class Reranker:
             List of reranked documents
         """
         # Extract text content from documents
-        passages = [doc.page_content for doc in docs]
+        passages = [doc.get('text') for doc in docs]
         scores = self.compute_scores(query, passages)
         
         scored_docs = []

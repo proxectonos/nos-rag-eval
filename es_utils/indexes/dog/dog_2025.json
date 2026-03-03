@@ -1,0 +1,67 @@
+{
+    "index_name": "dog_2025",
+    "mapping": {
+        "mappings": {
+            "properties": {
+                "metadata": {
+                    "properties": {
+                        "file_id": {"type": "keyword"},
+                        "doga_id": {"type": "integer"},
+                        "doga_date": {
+                            "type": "date",
+                            "format": "strict_date_optional_time||yyyy-MM-dd"
+                        },
+                        "index_date": {
+                            "type": "date",
+                            "format": "strict_date_optional_time||yyyy-MM-dd'T'HH:mm:ss.SSSSSS"
+                        },
+                        "url": {"type": "keyword"},
+                        "page_number": {"type": "keyword"}
+                    }
+                },
+                "document": {
+                    "properties": {
+                        "title": {
+                            "type": "text",
+                            "analyzer": "standard",
+                            "fields": {"keyword": {"type": "keyword"}}
+                        },
+                        "content": {"type": "text", "analyzer": "standard"},
+                        "section": {
+                            "type": "keyword",
+                            "fields": {
+                                "text": {
+                                    "type": "text",
+                                    "analyzer": "standard"
+                                }
+                            }
+                        },
+                        "subsection": {
+                            "type": "keyword",
+                            "fields": {
+                                "text": {
+                                    "type": "text",
+                                    "analyzer": "standard"
+                                }
+                            }
+                        },
+                        "entity": {
+                            "type": "keyword",
+                            "fields": {
+                                "text": {
+                                    "type": "text",
+                                    "analyzer": "standard"
+                                }
+                            }
+                        }
+                    }
+                },
+                "text_embedding": {"type": "dense_vector", "dims": 1024},
+                "relative_chunk_id": {"type": "integer"},
+                "total_chunks": {"type": "integer"},
+                "num_words": {"type": "integer"},
+                "lang": {"type": "keyword"}
+            }
+        }
+    }
+}

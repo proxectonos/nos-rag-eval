@@ -4,7 +4,6 @@ from itertools import product
 from types import SimpleNamespace
 import yaml
 
-
 # ---------------------------------------------------------------------------
 # Original dataclasses — kept for backward compatibility with any code
 # that still uses ConfigLoader.load() with the old per-experiment YAMLs.
@@ -13,6 +12,7 @@ import yaml
 @dataclass
 class GeneralConfig:
     hf_cache_dir: str
+    dataset_name : Optional[str] = None
 
 @dataclass
 class DatabaseConfig:
@@ -82,6 +82,7 @@ class ConfigLoader:
 class _GeneralConfig:
     hf_cache_dir: str
     elastic_config_file: str
+    dataset_name: str
 
 @dataclass
 class _RetrieverDefaults:
@@ -116,6 +117,7 @@ class ExperimentConfig:
     name: str
     hf_cache_dir: str
     elastic_config_file: str
+    dataset_name: str
     embedding_model: Optional[str]
     elastic_index: str
     retrieval_strategy: str
@@ -128,7 +130,8 @@ class ExperimentConfig:
     def general_config(self) -> SimpleNamespace:
         return SimpleNamespace(
             hf_cache_dir=self.hf_cache_dir,
-            elastic_config_file=self.elastic_config_file
+            elastic_config_file=self.elastic_config_file,
+            dataset_name=self.dataset_name
         )
 
     @property
@@ -178,9 +181,10 @@ class ExperimentsLoader:
             emb = embedders[emb_name]
             rer = rerankers[rer_name]
             experiments.append(ExperimentConfig(
-                name=f"{emb_name} + {rer_name}",
+                name=f"{emb_name}_{rer_name}",
                 hf_cache_dir=general.hf_cache_dir,
                 elastic_config_file=general.elastic_config_file,
+                dataset_name=general.dataset_name,
                 embedding_model=emb.embedding_model,
                 elastic_index=emb.elastic_index,
                 retrieval_strategy=emb.retrieval_strategy or defaults.retrieval_strategy,

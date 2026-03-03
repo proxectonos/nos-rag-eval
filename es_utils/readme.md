@@ -24,6 +24,6 @@ Careful: the first port in the `-p` argument must be different for the port uses
 
 ## Step 3: Set password
 ```bash
-docker exec -it elastic-demo-rag /usr/share/elasticsearch/bin/elasticsearch-reset-password -u elastic
+docker exec -it elastic-rag-eval /usr/share/elasticsearch/bin/elasticsearch-reset-password -u elastic
 ```
 Add this generated password in the `config_elastic.yaml` file

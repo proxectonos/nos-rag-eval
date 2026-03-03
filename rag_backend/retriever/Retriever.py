@@ -70,7 +70,6 @@ class Retriever:
         try:
             self.search_url = f"{self.es_endpoint}/{index}/_search?size={self.num_docs_retrieval}"
             #print(f"Searching ElasticSearch at {self.search_url} with query: {query}")
-            # Make the request to ElasticSearch
             response = requests.post(
                 self.search_url, 
                 auth=(self.es_user, self.es_password), 
@@ -88,5 +87,4 @@ class Retriever:
             #    print(f"ElasticSearch response fields: {list(documents[0].keys())}, metadata fields: {list(documents[0]['metadata'].keys())}")
         except requests.exceptions.RequestException as e:
             print(f"Error during ElasticSearch request: {e}")
-        print(f"Retrieved {len(documents)} documents from ElasticSearch.")
         return documents

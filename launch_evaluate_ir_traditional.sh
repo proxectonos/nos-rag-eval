@@ -3,7 +3,7 @@
 source /home/compartido/pabloF/load_env.sh
 
 BASE_DIR="/home/compartido/pabloF/nos-rag-eval/results"
-
+RESULTS_FOLDER="" #/*/
 # Recorre todos los subdirectorios dentro de BASE_DIR
 for EXP_DIR in "$BASE_DIR"/*/; do
     echo "Procesando directorio: $EXP_DIR"

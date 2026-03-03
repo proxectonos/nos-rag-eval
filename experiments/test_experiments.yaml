@@ -1,16 +1,17 @@
 general_config:
   hf_cache_dir: /home/compartido/pabloF/cache
-  elastic_config_file: /home/compartido/pabloF/nos-rag-eval/rag_retriever/configs/config_elastic.yaml
+  elastic_config_file: /home/compartido/pabloF/nos-rag-eval/es_utils/config_elastic.yaml
+  dataset_name: press #press/dog
 
 retriever_defaults:
   retrieval_strategy: SIMILARITY # used when the embedder does not override it
-  initial_retrieve_count: 10
-  query_top_k: 3
+  num_docs_retrieval: 10 # Number of initial results to retrieve before re-ranking
+  num_docs_reranker: 3  # Number of top results to return for a query
 
 embedders:
   - name: bm25
     retrieval_strategy: BM25
-    elastic_index: no_embedding_paragraph
+    elastic_index: no_embedding_paragraph_no_revised_questions
   - name: qwen3
     embedding_model: Qwen/Qwen3-Embedding-0.6B
     elastic_index: qwen3_paragraph
@@ -48,47 +49,47 @@ experiments:
   - embedder: bm25
     reranker: bge
 
-  - embedder: qwen3
-    reranker: none
-  - embedder: qwen3
-    reranker: qwen
-  - embedder: qwen3
-    reranker: jina
-  - embedder: qwen3
-    reranker: bge
+  # - embedder: qwen3
+  #   reranker: none
+  # - embedder: qwen3
+  #   reranker: qwen
+  # - embedder: qwen3
+  #   reranker: jina
+  # - embedder: qwen3
+  #   reranker: bge
 
-  - embedder: granite
-    reranker: none
-  - embedder: granite
-    reranker: qwen
-  - embedder: granite
-    reranker: jina
-  - embedder: granite
-    reranker: bge
+  # - embedder: granite
+  #   reranker: none
+  # - embedder: granite
+  #   reranker: qwen
+  # - embedder: granite
+  #   reranker: jina
+  # - embedder: granite
+  #   reranker: bge
 
-  - embedder: gemma
-    reranker: none
-  - embedder: gemma
-    reranker: qwen
-  - embedder: gemma
-    reranker: jina
-  - embedder: gemma
-    reranker: bge
+  # - embedder: gemma
+  #   reranker: none
+  # - embedder: gemma
+  #   reranker: qwen
+  # - embedder: gemma
+  #   reranker: jina
+  # - embedder: gemma
+  #   reranker: bge
 
-  - embedder: all-minilm
-    reranker: none
-  - embedder: all-minilm
-    reranker: qwen
-  - embedder: all-minilm
-    reranker: jina
-  - embedder: all-minilm
-    reranker: bge
+  # # - embedder: all-minilm
+  # #   reranker: none
+  # # - embedder: all-minilm
+  # #   reranker: qwen
+  # # - embedder: all-minilm
+  # #   reranker: jina
+  # # - embedder: all-minilm
+  # #   reranker: bge
 
-  - embedder: bge-m3
-    reranker: none
-  - embedder: bge-m3
-    reranker: qwen
-  - embedder: bge-m3
-    reranker: jina
-  - embedder: bge-m3
-    reranker: bge
+  # - embedder: bge-m3
+  #   reranker: none
+  # - embedder: bge-m3
+  #   reranker: qwen
+  # - embedder: bge-m3
+  #   reranker: jina
+  # - embedder: bge-m3
+  #   reranker: bge
