@@ -44,7 +44,6 @@ else:
 for exp_conf in experiments:
     print(f"Using config file saved in {exp_conf}...")
     rag = RAG(config=exp_conf)
-    print(exp_conf)
     if args.run_id:
         output_file = f'results/retrieved_dataset_{exp_conf.name}_run{args.run_id}.json'
     else:
@@ -62,8 +61,6 @@ for exp_conf in experiments:
 
     try:
         for item in tqdm(dataset, desc="Generating dataset"):
-            #print(item)
-            #exit(1)
             idx = item['id']
             if idx in processed_ids:
                 continue    
@@ -77,7 +74,6 @@ for exp_conf in experiments:
             try:
                 retrieved_contexts = []
                 for doc in relevant_docs:
-                    print(doc)
                     retrieved_contexts.append({
                         "context": data_adapter.get_content(doc),
                         "score": data_adapter.get_score(doc),
@@ -88,7 +84,6 @@ for exp_conf in experiments:
                             "paragraph_position": data_adapter.get_paragraph_position(doc),
                         }
                     })
-                    #print(f"Retrieved context for query {idx}: {doc['content'][:100]}... with score {doc['score']} and metadata {metadata}")
                 # Create new result
                 new_result = {
                     "id": idx,
@@ -99,7 +94,6 @@ for exp_conf in experiments:
                     #"answer_reference": item['answer'],
                     "retrieved_contexts": retrieved_contexts
                 }
-                
                 # Append to results and save immediately
                 results.append(new_result)
                 with open(output_file, 'w', encoding='utf-8') as f:
@@ -110,8 +104,8 @@ for exp_conf in experiments:
                 continue
 
     except KeyboardInterrupt:
-        print("\nProcessing interrupted by user. Partial results have been saved.")
+        print("Processing interrupted by user. Partial results have been saved.")
     except Exception as e:
-        print(f"\nUnexpected error: {str(e)}")
+        print(f"Unexpected error: {str(e)}")
     finally:
-        print(f"\nResults saved to {output_file}")
+        print(f"Results saved to {output_file}")

@@ -56,8 +56,8 @@ class DOGAdapter(BaseDocumentAdapter):
         return doc.get('metadata', {}).get('document', {})
 
     def get_id(self, doc) -> str:
-        # Path: metadata -> metadata -> file_id
-        return self._get_inner_metadata(doc).get('file_id', '')
+        meta = self._get_inner_metadata(doc)
+        return meta.get('doga_id') or f"DOG-{meta.get('doga_date')}"
 
     def get_content(self, doc) -> str:
         # Path: metadata -> document -> content
@@ -71,8 +71,8 @@ class DOGAdapter(BaseDocumentAdapter):
         return doc.get('metadata', {}).get('relative_chunk_id',-1)
 
     def get_source_id(self, doc) -> str:
-        meta = self._get_inner_metadata(doc)
-        return meta.get('doga_id') or f"DOG-{meta.get('doga_date')}"
+        # Path: metadata -> metadata -> file_id
+        return self._get_inner_metadata(doc).get('file_id', '')
 
     def get_score(self, doc) -> float:
         score = doc.get('score')
