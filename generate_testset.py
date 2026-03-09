@@ -7,7 +7,7 @@ from tqdm import tqdm
 
 from es_utils.index_adapters import PressAdapter, DOGAdapter
 from rag_backend.rag_retriever import RAG
-from utils.dataloader_evaluation import load_questions_with_metadata, load_dog_questions_with_metadata
+from utils.dataloader_evaluation import PressDataloader, DOGDataloader
 from utils.ConfigLoader import ExperimentsLoader
 
 elasticsearch_adapters = {
@@ -16,8 +16,8 @@ elasticsearch_adapters = {
 }
 
 dataloaders = {
-    "press": load_questions_with_metadata,
-    "dog": load_dog_questions_with_metadata,
+    "press": PressDataloader().load_questions_with_contexts,
+    "dog": DOGDataloader().load_questions_with_contexts,
 }
 
 parser = argparse.ArgumentParser(description="Generate test set with RAG retriever.")
