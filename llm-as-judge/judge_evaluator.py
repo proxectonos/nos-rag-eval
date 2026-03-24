@@ -1,5 +1,5 @@
 from Judge import GPTJudge, SeleneJudge
-from judge_metrics import compute_context_recall, compute_context_precision
+from judge_metrics import compute_context_recall, compute_context_precision, compute_faithfulness
 import torch
 import argparse
 import os
@@ -25,17 +25,24 @@ def evaluate_file(dataset, references_path, results_path,  judge_llm, metric="re
     reference_answers = list(dataloaders[dataset].load_answers(references_path))
     metric_scores = []
     for i, example in enumerate(eval_dataset):
-        user_input = example['user_input']
+        user_input = example.get('user_input')
         reference_response = reference_answers[i]['answer'][0]
+        generated_response = example.get('generated_response','') #The generated response may be missing if we only evaluate the retrieval step in the RAG.
         retrieved_contexts = [context_json['context'] for context_json in example['retrieved_contexts']]
         print(f"--------------Evaluating question {i}: {user_input}-----------------\n")
         try:
             if metric == "recall":
                 score = compute_context_recall(judge_llm, retrieved_contexts, reference_response)
                 print(f"Context Recall: {score:.2f}\n")
-            else:
+            elif metric == "precision":
                 score = compute_context_precision(judge_llm, retrieved_contexts, user_input, reference_response)
                 print(f"Context Precision: {score:.2f}\n")
+            elif metric == "faithfulness":
+                score = compute_faithfulness(judge_llm, retrieved_contexts, user_input, generated_response)
+                print(f"Faithfulness: {score:.2f}\n")
+            else:
+                print(f"Unsupported metric: {metric}. Skipping evaluation for this question.")
+                continue
         except Exception as e:
             print(f"Error evaluating question: {e}. Skipping and clearing cache...")
             if torch.cuda.is_available():

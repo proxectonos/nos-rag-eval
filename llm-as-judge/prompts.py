@@ -50,4 +50,28 @@ Yes: The context  clearly helps answer the question and supports the ground trut
 No: The context  does not help answer the question or is irrelevant to the ground truth answer.
 """
 
-__all__ = ['CONTEXT_RECALL_PROMPT', 'CONTEXT_PRECISION_PROMPT']
+FAITHFULNESS_PROMPT = """You are tasked with evaluating whether a specific sentence from a Galician answer is factually grounded in a retrieved context, based on a binary scoring rubric. Provide comprehensive feedback strictly adhering to the rubric, followed by a binary Yes/No judgment. Avoid generating any additional opening, closing, or explanations.
+
+⚠️ Note: The sentence and context are written in Galician. Do not translate or modify the original language. Evaluate as-is.
+
+Here are some rules of the evaluation:
+(1) You should prioritize evaluating whether the factual claims made in the sentence can be directly inferred or verified from the retrieved context. The sentence should be considered faithful if it does not contradict or go beyond what the context states.
+(2) If the sentence introduces information not present in the context or contradicts it, respond "No".
+
+Your reply should strictly follow this format:
+**Result:** <Yes or No>
+
+Here is the data:
+
+Sentence:
+{sentence}
+
+Retrieved Context:
+{context}
+
+Score Rubrics:
+Yes: The sentence is fully grounded in the retrieved context and makes no claims that contradict or go beyond it.
+No: The sentence introduces information not supported by the context, or contradicts what the context states.
+"""
+
+__all__ = ['CONTEXT_RECALL_PROMPT', 'CONTEXT_PRECISION_PROMPT', 'FAITHFULNESS_PROMPT']

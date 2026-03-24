@@ -1,5 +1,5 @@
 import re
-from prompts import CONTEXT_RECALL_PROMPT, CONTEXT_PRECISION_PROMPT
+from prompts import CONTEXT_RECALL_PROMPT, CONTEXT_PRECISION_PROMPT, FAITHFULNESS_PROMPT
 
 def split_sentences(text): #Naive approach to split sentences
     sentences = re.split(r'(?<=[.!?])\s+', text.strip())
@@ -9,13 +9,6 @@ def build_context_recall_prompt(sentence, context):
     return CONTEXT_RECALL_PROMPT.format(
         sentence=sentence,
         context=context)
-
-def build_context_precision_prompt(context, question, ground_truth):
-    return CONTEXT_PRECISION_PROMPT.format(
-        context=context,
-        question=question,
-        ground_truth=ground_truth
-    )
 
 def compute_context_recall(judge, contexts, ground_truth):
     gt_sentences = split_sentences(ground_truth)
@@ -32,6 +25,13 @@ def compute_context_recall(judge, contexts, ground_truth):
                 break  # One supporting context is enough
     return relevant_count / len(gt_sentences)
 
+
+def build_context_precision_prompt(context, question, ground_truth):
+    return CONTEXT_PRECISION_PROMPT.format(
+        context=context,
+        question=question,
+        ground_truth=ground_truth
+    )
 
 def compute_context_precision(judge, contexts, question, ground_truth):
     """
@@ -69,3 +69,25 @@ def compute_context_precision(judge, contexts, question, ground_truth):
         precisions.append(relevant_so_far / k)
     # Context Precision: mean of all Precision@k
     return sum(precisions) / len(precisions) if precisions else 0.0
+
+
+def build_faithfulness_prompt(response, context):
+    return FAITHFULNESS_PROMPT.format(
+        response=response,
+        context=context
+    )
+
+def compute_faithfulness(judge, response, context):
+    ans_sentences = split_sentences(response)
+    if not ans_sentences:
+        return 0.0
+    relevant_count = 0
+    for sent in ans_sentences:
+        for ctx in contexts:
+            prompt = build_faithfulness_prompt(sent, ctx)
+            #print(prompt)
+            result = judge.evaluate(prompt)
+            if "yes" in result.lower():
+                relevant_count += 1
+                break  # One supporting context is enough
+    return relevant_count / len(ans_sentences)
