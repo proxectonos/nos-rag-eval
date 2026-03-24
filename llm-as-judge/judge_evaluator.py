@@ -29,12 +29,18 @@ def evaluate_file(dataset, references_path, results_path,  judge_llm, metric="re
         reference_response = reference_answers[i]['answer'][0]
         retrieved_contexts = [context_json['context'] for context_json in example['retrieved_contexts']]
         print(f"--------------Evaluating question {i}: {user_input}-----------------\n")
-        if metric == "recall":
-            score = compute_context_recall(judge_llm, retrieved_contexts, reference_response)
-            print(f"Context Recall: {score:.2f}\n")
-        else:
-            score = compute_context_precision(judge_llm, retrieved_contexts, user_input, reference_response)
-            print(f"Context Precision: {score:.2f}\n")
+        try:
+            if metric == "recall":
+                score = compute_context_recall(judge_llm, retrieved_contexts, reference_response)
+                print(f"Context Recall: {score:.2f}\n")
+            else:
+                score = compute_context_precision(judge_llm, retrieved_contexts, user_input, reference_response)
+                print(f"Context Precision: {score:.2f}\n")
+        except Exception as e:
+            print(f"Error evaluating question: {e}. Skipping and clearing cache...")
+            if torch.cuda.is_available():
+                torch.cuda.empty_cache()
+            score = 0.0
         metric_scores.append(score)
     avg_score = sum(metric_scores) / len(metric_scores) if metric_scores else 0.0
     print(f"Average Context {metric.capitalize()} for {os.path.basename(results_path)}: {avg_score:.3f}")
