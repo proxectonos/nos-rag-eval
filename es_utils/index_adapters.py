@@ -60,8 +60,7 @@ class DOGAdapter(BaseDocumentAdapter):
         return meta.get('doga_id') or f"DOG-{meta.get('doga_date')}"
 
     def get_content(self, doc) -> str:
-        # Path: metadata -> document -> content
-        return self._get_document_section(doc).get('content', '')
+        return doc.get('content')
 
     def get_title(self, doc) -> str:
         # Path: metadata -> document -> title
