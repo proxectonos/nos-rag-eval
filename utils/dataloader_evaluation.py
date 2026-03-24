@@ -1,75 +1,84 @@
 import json
 from typing import List, Tuple
+from abc import ABC
 
-def load_qa_pairs_list(file_path: str) -> Tuple[List[str], List[str]]:
-    """
-    Load questions and answers from JSON file containing an array of QA pairs.
-    Returns tuple of (questions, answers) lists.
-    """
-    questions = []
-    answers = []
+class DataloaderEvaluation(ABC):
+    def load_questions_with_contexts(self, file_path: str) -> List[dict]:
+        pass
     
-    with open(file_path, 'r', encoding='utf-8') as f:
-        data = json.load(f)
-        for item in data:
-            if 'question' in item and 'answer' in item:
-                # Handle list of answers
-                if isinstance(item['answer'], list):
-                    for ans in item['answer']:
-                        questions.append(item['question'])
-                        answers.append(ans)
-                # Handle single answer
-                else:
-                    questions.append(item['question'])
-                    answers.append(item['answer'])
-                    
-    return questions, answers
+    def load_answers(self, file_path: str) -> List[dict]:
+        pass
 
-def load_qa_with_metadata(file_path: str):
-    """
-    Load questions, answers, and IDs from JSON file containing an array of QA pairs.
-    Returns a list of dict (ids, questions, answers)
-    """
-    qa_dict = []
+class PressDataloader(DataloaderEvaluation):
+
+    def load_questions_with_contexts(self, file_path: str) -> List[dict]:
+        questions = []
     
-    with open(file_path, 'r', encoding='utf-8') as f:
-        data = json.load(f)
+        with open(file_path, 'r', encoding='utf-8') as f:
+            data = json.load(f)
+            for item in data:
+                questions.append({
+                    "id": item['id'],
+                    "source_id": item['source_id'],
+                    "question": item['question'],
+                    "context": item['context'],
+                    "context_paragraph_indices": item["context_paragraph_indices"]
+                })
+                
+        return questions
+
+    def load_answers(self, file_path: str) -> List[dict]:
+        with open(file_path, 'r', encoding='utf-8') as f:
+            data = json.load(f)
         for item in data:
             if isinstance(item['answer'], list):
-                for i,ans in enumerate(item['answer']):
-                    qa_dict.append({
-                            "id": f"{item['id']}_{i}",
-                            "question": item['question'],
-                            "answer": ans,
-                            "source_id": item['source_id'],
-                            "context": item['context']
-                    })
-            else:
-                qa_dict.append({
+                #for i, ans in enumerate(item['answer']):
+                    yield {
                         "id": f"{item['id']}_0",
-                        "question": item['question'],
-                        "answer": item['answer'],
+                        "answer": item['answer'][0],
                         "source_id": item['source_id'],
                         "context": item['context']
-                })      
-    return qa_dict
+                    }
+            else:
+                yield {
+                    "id": f"{item['id']}_0",
+                    "answer": item['answer'],
+                    "source_id": item['source_id'],
+                    "context": item['context']
+                }   
 
-def load_questions_with_metadata(file_path: str) -> List[dict]:
-    """
-    Load questions and metadata from JSON file containing an array of questions.
-    Returns a list of dicts with 'id', 'question', and 'metadata'.
-    """
-    questions = []
+class DOGDataloader(DataloaderEvaluation):
     
-    with open(file_path, 'r', encoding='utf-8') as f:
-        data = json.load(f)
-        for item in data:
-            questions.append({
-                "id": item['id'],
-                "source_id": item['source_id'],
-                "question": item['question'],
-                "context": item['context'],
-                "context_paragraph_indices": item["context_paragraph_indices"]
-            })
-            
-    return questions
+    def load_questions_with_contexts(self, file_path: str) -> List[dict]:
+        questions = []
+    
+        with open(file_path, 'r', encoding='utf-8') as f:
+            data = json.load(f)
+            for item in data:
+                for q_i, question in enumerate(item['question']):
+                    questions.append({
+                        "id": f"{item['uid']}_{q_i}",
+                        "file_name": item['file_name'],
+                        "url": item['url'],
+                        "category": item['category'],
+                        "question": question,
+                        "context": item['context']
+                    })
+                
+        return questions
+
+    def load_answers(self, file_path: str) -> List[dict]:
+        with open(file_path, 'r', encoding='utf-8') as f:
+            data = json.load(f)
+            for item in data:
+                questions = item['question']
+                answers = item['answer']
+                for q_i, question in enumerate(questions):
+                    yield {
+                        "id": f"{item['uid']}_{q_i}",
+                        "answer": answers,
+                        "file_name": item['file_name'],
+                        "url": item['url'],
+                        "category": item['category'],
+                        "context": item['context']
+                    }

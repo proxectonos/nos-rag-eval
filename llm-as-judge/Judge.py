@@ -1,25 +1,31 @@
 from transformers import AutoModelForCausalLM, AutoTokenizer, BitsAndBytesConfig
 import torch
-class GPT:
-    def __init__(self, cache_dir, device='cpu'):
-        quantization_config = BitsAndBytesConfig(
+
+class Judge:
+    def __init__(self, model_name, cache_dir, device='cpu', quantization=False):
+        
+        self.device = device
+        self.cache_dir = cache_dir
+
+        # Quantization configuration
+        self.quantization_config = BitsAndBytesConfig(
             load_in_4bit=True,
             bnb_4bit_compute_dtype=torch.float16,
             bnb_4bit_quant_type="nf4",
             bnb_4bit_use_double_quant=True,
         )
 
+        # Load model and tokenizer
         self.model = AutoModelForCausalLM.from_pretrained(
-            "openai/gpt-oss-20b",
+            model_name,
             device_map="auto",
             cache_dir=cache_dir,
-            #quantization_config=quantization_config, # remove to load FP16 model
+            quantization_config=self.quantization_config if quantization else None,
         )
         self.tokenizer = AutoTokenizer.from_pretrained(
-            "openai/gpt-oss-20b",
+            model_name,
             cache_dir=cache_dir,
         )
-        self.device = device
 
     def evaluate(self, prompt, temperature=0.01, max_new_tokens=512):
         try:
@@ -59,6 +65,18 @@ class GPT:
         except Exception as e:
             print(f"Error in evaluate function: {e}")
             return None
+
+
+class GPTJudge(Judge):
+
+    def __init__(self, cache_dir, device='cpu', quantization=True):
+        super().__init__("openai/gpt-oss-20b", cache_dir, device, quantization)
+
+
+class SeleneJudge(Judge):
+
+    def __init__(self, cache_dir, device='cpu', quantization=False):
+        super().__init__("AtlaAI/Selene-1-Mini-Llama-3.1-8B", cache_dir, device, quantization)
 
     def parse_atla_response(self, response):
         """
