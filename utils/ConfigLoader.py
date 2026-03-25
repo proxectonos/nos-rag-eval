@@ -108,6 +108,17 @@ class _RerankerConfig:
 
 
 @dataclass
+class _LLMConfig:
+    name: str
+    llm_model: Optional[str] = None
+    quantization: bool = False
+
+    @property
+    def use_llm(self) -> bool:
+        return self.name != "none"
+
+
+@dataclass
 class ExperimentConfig:
     """
     A fully resolved single experiment — equivalent to one of the old per-experiment YAMLs.
@@ -125,6 +136,9 @@ class ExperimentConfig:
     num_docs_retrieval: int
     use_reranking: bool
     reranker_model: Optional[str]
+    use_llm: bool = False
+    llm_model: Optional[str] = None
+    llm_quantization: bool = False
 
     @property
     def general_config(self) -> SimpleNamespace:
@@ -157,6 +171,14 @@ class ExperimentConfig:
             reranker_model=self.reranker_model
         )
 
+    @property
+    def llm(self) -> SimpleNamespace:
+        return SimpleNamespace(
+            use_llm=self.use_llm,
+            llm_model=self.llm_model,
+            quantization=self.llm_quantization
+        )
+
 
 class ExperimentsLoader:
     @staticmethod
@@ -169,19 +191,21 @@ class ExperimentsLoader:
 
         embedders = {e['name']: _EmbedderConfig(**e) for e in cfg['embedders']}
         rerankers = {r['name']: _RerankerConfig(**r) for r in cfg['rerankers']}
+        llms = {l['name']: _LLMConfig(**l) for l in cfg.get('llms', [])}
 
         # Use explicit experiment list if defined, otherwise run all combinations
         if 'experiments' in cfg:
-            pairs = [(exp['embedder'], exp['reranker']) for exp in cfg['experiments']]
+            pairs = [(exp['embedder'], exp['reranker'], exp.get('llm')) for exp in cfg['experiments']]
         else:
-            pairs = list(product(embedders.keys(), rerankers.keys()))
+            pairs = [(e, r, next(iter(llms), None)) for e, r in product(embedders.keys(), rerankers.keys())]
 
         experiments = []
-        for emb_name, rer_name in pairs:
+        for emb_name, rer_name, llm_name in pairs:
             emb = embedders[emb_name]
             rer = rerankers[rer_name]
+            llm = llms.get(llm_name) if llm_name else None
             experiments.append(ExperimentConfig(
-                name=f"{emb_name}_{rer_name}",
+                name=f"{emb_name}_{rer_name}" + (f"_{llm_name}" if llm_name else ""),
                 hf_cache_dir=general.hf_cache_dir,
                 elastic_config_file=general.elastic_config_file,
                 dataset_name=general.dataset_name,
@@ -192,6 +216,9 @@ class ExperimentsLoader:
                 num_docs_reranker=defaults.num_docs_reranker,
                 use_reranking=rer.use_reranking,
                 reranker_model=rer.reranker_model,
+                use_llm=llm.use_llm if llm else False,
+                llm_model=llm.llm_model if llm else None,
+                llm_quantization=llm.quantization if llm else False,
             ))
 
         return experiments
@@ -205,3 +232,4 @@ if __name__ == "__main__":
         print("  database:      ", exp.database)
         print("  retriever:     ", exp.retriever)
         print("  reranker:      ", exp.reranker)
+        print("  llm:           ", exp.llm)
