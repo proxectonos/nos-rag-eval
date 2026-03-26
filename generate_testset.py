@@ -84,21 +84,21 @@ for exp_conf in experiments:
                             "paragraph_position": data_adapter.get_paragraph_position(doc),
                         }
                     })
-                # Create new result
+                # Create new result, starting with reference data from the dataset
                 new_result = {
                     "id": idx,
                     "user_input": query,
                     "reference_source_id": item.get('source_id') or item.get('file_name'),
                     "reference_context": item.get('context',''),
                     "reference_context_paragraphs": item.get('context_paragraph_indices',None),
-                    #"answer_reference": item['answer'],
-                    "retrieved_contexts": retrieved_contexts
+                    "reference_answer": item.get('answer',''),             
                 }
                 # Add LLM response if configured
                 if exp_conf.use_llm:
                     llm_response = rag.generate_response(query, retrieved_contexts)
                     new_result["answer"] = llm_response
-                
+                #Add retrieved contexts to the result
+                new_result["retrieved_contexts"] = retrieved_contexts
                 # Append to results and save immediately
                 results.append(new_result)
                 with open(output_file, 'w', encoding='utf-8') as f:

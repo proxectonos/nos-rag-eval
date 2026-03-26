@@ -22,7 +22,8 @@ class PressDataloader(DataloaderEvaluation):
                     "source_id": item['source_id'],
                     "question": item['question'],
                     "context": item['context'],
-                    "context_paragraph_indices": item["context_paragraph_indices"]
+                    "context_paragraph_indices": item["context_paragraph_indices"],
+                    "answer": item['answer']
                 })
                 
         return questions

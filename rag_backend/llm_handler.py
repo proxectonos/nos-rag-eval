@@ -108,9 +108,9 @@ class LLMHandler:
         """
         # Prepare inputs
         prompt = self._prepare_prompt(messages)
-        print("[LLMHandler] Prepared prompt:")
-        print(prompt)
-        print("-" * 60)
+        #print("[LLMHandler] Prepared prompt:")
+        #print(prompt)
+        #print("-" * 60)
         
         inputs = self._tokenize_prompt(prompt)
 
@@ -129,9 +129,9 @@ class LLMHandler:
         generated_tokens = outputs[0][len(inputs[0]):]
         response = self.tokenizer.decode(generated_tokens, skip_special_tokens=True)
         
-        print("[LLMHandler] Generated response:")
-        print(response)
-        print("-" * 60)
+        #print("[LLMHandler] Generated response:")
+        #print(response)
+        #print("-" * 60)
 
         # Stop sequence cleanup
         stop_sequence = "Non o sei."
