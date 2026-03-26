@@ -1,13 +1,10 @@
-from elasticsearch import Elasticsearch
 from sentence_transformers import SentenceTransformer
 from utils.ConfigLoader import ConfigLoader, ExperimentConfig
 from rag_backend.retriever.Reranker import Reranker
 from rag_backend.retriever.Retriever import Retriever
-import torch
+from rag_backend.llm_handler import LLMHandler
 from typing import Dict, Union
-from enum import Enum
-import pprint
-
+import torch
 
 class RAG:
     def __init__(self, config: Union[str, ExperimentConfig]):
@@ -22,6 +19,16 @@ class RAG:
             self.config = config
         self.elastic_config = ConfigLoader.load_elastic(self.config.database.elastic_config_file)
         self.retriever = self.__initialize_retriever()
+        if self.config.llm.use_llm:
+            print("Initializing LLM...")
+            self.llm = LLMHandler(
+                model_name=self.config.llm.llm_model,
+                cache_dir=self.config.general_config.hf_cache_dir,
+                quantization=self.config.llm.quantization,
+                system_prompt=self.config.llm.system_prompt
+            )
+        else:
+            self.llm = None
         print("RAG system initialized successfully.")
     
     def __initialize_retriever(self):
@@ -74,11 +81,8 @@ class RAG:
         # Retrieve relevant documents
         reranked_docs = self.retriever.invoke(user_query, self.config.database.elastic_index)
         #print(reranked_docs)
-        # Store source information
         reranked_docs_structured = []
         for i, (doc, score) in enumerate(reranked_docs):
-            # Get document content and metadata
-            #print(doc)
             score = doc.get('metadata', {}).get('score', None)
             source_data = {
                 "id": i+1,
@@ -87,5 +91,20 @@ class RAG:
                 "metadata": doc.get('metadata',{})
             }
             reranked_docs_structured.append(source_data)
-        
         return reranked_docs_structured
+
+    def generate_response(self, query, retrieved_docs):
+        # Format the context for the response
+        context = "\n\n".join([f"Documento {i}: {doc["context"]}" for i, doc in enumerate(retrieved_docs, start=1)])
+        
+        # Generate response
+        prompt = self.llm.default_system_prompt_pre + context + self.llm.default_system_prompt_post
+        prompt = prompt + query
+        
+        messages = [
+            {"role": "system", "content": self.llm.default_system_prompt},
+            {"role": "user", "content": prompt},
+        ]
+
+        response_content = self.llm.generate(messages) # Send messages variable instead chat_history to send formated prompt to generate
+        return response_content

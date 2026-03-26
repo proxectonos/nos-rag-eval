@@ -112,11 +112,11 @@ class _LLMConfig:
     name: str
     llm_model: Optional[str] = None
     quantization: bool = False
+    system_prompt: Optional[str] = None
 
     @property
     def use_llm(self) -> bool:
         return self.name != "none"
-
 
 @dataclass
 class ExperimentConfig:
@@ -139,6 +139,7 @@ class ExperimentConfig:
     use_llm: bool = False
     llm_model: Optional[str] = None
     llm_quantization: bool = False
+    llm_system_prompt: Optional[str] = None
 
     @property
     def general_config(self) -> SimpleNamespace:
@@ -176,7 +177,8 @@ class ExperimentConfig:
         return SimpleNamespace(
             use_llm=self.use_llm,
             llm_model=self.llm_model,
-            quantization=self.llm_quantization
+            quantization=self.llm_quantization,
+            system_prompt=self.llm_system_prompt
         )
 
 
@@ -219,6 +221,7 @@ class ExperimentsLoader:
                 use_llm=llm.use_llm if llm else False,
                 llm_model=llm.llm_model if llm else None,
                 llm_quantization=llm.quantization if llm else False,
+                llm_system_prompt=llm.system_prompt if llm else None,
             ))
 
         return experiments

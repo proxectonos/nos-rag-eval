@@ -6,7 +6,7 @@ import json
 from tqdm import tqdm
 
 from es_utils.index_adapters import PressAdapter, DOGAdapter
-from rag_backend.rag_retriever import RAG
+from rag_backend.rag import RAG
 from utils.dataloader_evaluation import PressDataloader, DOGDataloader
 from utils.ConfigLoader import ExperimentsLoader
 
@@ -94,6 +94,11 @@ for exp_conf in experiments:
                     #"answer_reference": item['answer'],
                     "retrieved_contexts": retrieved_contexts
                 }
+                # Add LLM response if configured
+                if exp_conf.use_llm:
+                    llm_response = rag.generate_response(query, retrieved_contexts)
+                    new_result["answer"] = llm_response
+                
                 # Append to results and save immediately
                 results.append(new_result)
                 with open(output_file, 'w', encoding='utf-8') as f:
