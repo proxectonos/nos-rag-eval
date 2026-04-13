@@ -27,7 +27,7 @@ def evaluate_file(dataset, references_path, results_path,  judge_llm, metric="re
     for i, example in enumerate(eval_dataset):
         user_input = example.get('user_input')
         reference_response = reference_answers[i]['answer'][0]
-        generated_response = example.get('generated_response','') #The generated response may be missing if we only evaluate the retrieval step in the RAG.
+        generated_response = example.get('answer','') #The generated response may be missing if we only evaluate the retrieval step in the RAG.
         retrieved_contexts = [context_json['context'] for context_json in example['retrieved_contexts']]
         print(f"--------------Evaluating question {i}: {user_input}-----------------\n")
         try:
@@ -38,7 +38,7 @@ def evaluate_file(dataset, references_path, results_path,  judge_llm, metric="re
                 score = compute_context_precision(judge_llm, retrieved_contexts, user_input, reference_response)
                 print(f"Context Precision: {score:.2f}\n")
             elif metric == "faithfulness":
-                score = compute_faithfulness(judge_llm, retrieved_contexts, user_input, generated_response)
+                score = compute_faithfulness(judge_llm, retrieved_contexts, generated_response)
                 print(f"Faithfulness: {score:.2f}\n")
             else:
                 print(f"Unsupported metric: {metric}. Skipping evaluation for this question.")
@@ -50,7 +50,7 @@ def evaluate_file(dataset, references_path, results_path,  judge_llm, metric="re
             score = 0.0
         metric_scores.append(score)
     avg_score = sum(metric_scores) / len(metric_scores) if metric_scores else 0.0
-    print(f"Average Context {metric.capitalize()} for {os.path.basename(results_path)}: {avg_score:.3f}")
+    print(f"Average {metric.capitalize()} for {os.path.basename(results_path)}: {avg_score:.3f}")
     return avg_score
 
 if __name__ == "__main__":
@@ -60,7 +60,7 @@ if __name__ == "__main__":
     parser.add_argument('--results', type=str, default=None, help='Path to a single results file')
     parser.add_argument('--folder', type=str, default=None, help='Path to a folder with multiple results files')
     parser.add_argument('--output', type=str, default="context_metric_results.jsonl", help='Output file for folder mode')
-    parser.add_argument('--metric', type=str, choices=['recall', 'precision'], default='recall', help='Metric to evaluate: recall or precision')
+    parser.add_argument('--metric', type=str, choices=['recall', 'precision', 'faithfulness'], default='recall', help='Metric to evaluate: recall or precision')
     parser.add_argument('--judge_model', type=str, choices=['gpt', 'selene'], default='selene', help='LLM model to use as judge: gpt or selene')
     parser.add_argument('--cache_dir', type=str, default=None, help='Cache directory for LLM models')
     args = parser.parse_args()
@@ -90,6 +90,6 @@ if __name__ == "__main__":
                     }) + "\n")
     elif args.results:
         avg_score = evaluate_file(args.dataset, args.references, results_path, judge_llm, metric=args.metric)
-        print(f"Average Context {args.metric.capitalize()}: {avg_score:.3f}")
+        print(f"Average {args.metric.capitalize()}: {avg_score:.3f}")
     else:
         print("Please provide either --results <file> or --folder <folder> argument.")

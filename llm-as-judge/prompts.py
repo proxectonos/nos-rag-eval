@@ -64,7 +64,7 @@ Your reply should strictly follow this format:
 Here is the data:
 
 Sentence:
-{sentence}
+{response}
 
 Retrieved Context:
 {context}

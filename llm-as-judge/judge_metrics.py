@@ -77,7 +77,7 @@ def build_faithfulness_prompt(response, context):
         context=context
     )
 
-def compute_faithfulness(judge, response, context):
+def compute_faithfulness(judge, contexts, response):
     ans_sentences = split_sentences(response)
     if not ans_sentences:
         return 0.0
@@ -85,7 +85,6 @@ def compute_faithfulness(judge, response, context):
     for sent in ans_sentences:
         for ctx in contexts:
             prompt = build_faithfulness_prompt(sent, ctx)
-            #print(prompt)
             result = judge.evaluate(prompt)
             if "yes" in result.lower():
                 relevant_count += 1
