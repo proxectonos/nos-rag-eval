@@ -63,7 +63,8 @@ class DOGDataloader(DataloaderEvaluation):
                         "url": item['url'],
                         "category": item['category'],
                         "question": question,
-                        "context": item['context']
+                        "context": item['context'],
+                        "answer": item['answer']
                     })
                 
         return questions
