@@ -85,9 +85,7 @@
     "context_score": 0.7727,
     "context_paragraph_indices": [
       0,
-      1,
-      2,
-      3
+      1
     ]
   },
   {
@@ -1810,7 +1808,7 @@
       "A Delegación do Goberno en Lugo enfrenta unha crise tras a dimisión de Otero, investigado por irregularidades en multas de tráfico, mentres o exxefe de Tráfico, Xullo González, tamén está vinculado a posibles favores na retirada de sancións.",
       "A investigación xudicial sobre multas na Xefatura Provincial de Tráfico de Lugo provocou a dimisión de Otero e a investigación de dúas liñas: unha trama corrupta e posibles actos de favor entre autoridades."
     ],
-    "context": "O subdelegado do Goberno en Lugo, Jesús Otero, presentou na mañá deste venres a súa dimisión, de forma voluntaria, ante o Ministerio de Administracións Públicas (M.A.P), por mor da investigación iniciada polo xulgado número 3 de Lugo para esclarecer presuntas irregularidades na tramitación de multas na Xefatura Provincial de Tráfico.\nFontes da contorna do subdelegado aseguraron a AGN que Otero \"está tranquilo\" e desexando que todo se aclare canto antes\". Nun comunicado remitido pola Delegación do Goberno en Galicia, sublíñase que toma esta decisión, precisamente, \"coa vontade de continuar colaborando coas instancias xudiciais nesta investigación, a fin de aclarar todas as circunstancias derivadas das dilixencias\" abertas polo citado xulgado.",
+    "context": "O subdelegado do Goberno en Lugo, Jesús Otero, presentou na mañá deste venres a súa dimisión, de forma voluntaria, ante o Ministerio de Administracións Públicas (M.A.P), por mor da investigación iniciada polo xulgado número 3 de Lugo para esclarecer presuntas irregularidades na tramitación de multas na Xefatura Provincial de Tráfico.Fontes da contorna do subdelegado aseguraron a AGN que Otero \"está tranquilo\" e desexando que todo se aclare canto antes\". Nun comunicado remitido pola Delegación do Goberno en Galicia, sublíñase que toma esta decisión, precisamente, \"coa vontade de continuar colaborando coas instancias xudiciais nesta investigación, a fin de aclarar todas as circunstancias derivadas das dilixencias\" abertas polo citado xulgado.",
     "category": "politica",
     "context_replaced": true,
     "context_score": 0.7072,
@@ -1827,7 +1825,7 @@
       "As investigacións divídense en dúas partes: unha trama corrupta que eliminaba multas mediante pagamento e unha liña que analiza posibles favores na xestión de sancións por parte de Otero e González.",
       "As autoridades estudan dúas posibles irregularidades: unha rede que cobraba por anular multas (con tres detidos) e unha liña separada sobre favores políticos na retirada de sancións."
     ],
-    "context": "En calquera caso, fontes consultadas por AGN confirmaron que a imputación de Otero nesta investigación xudicial non está relacionada co caso da trama que supostamente operaba na Xefatura Provincial de Tráfico de Lugo para sacar multas a cambio de diñeiro.\nEses mesmos informadores aclararon que as investigacións están a seguir dúas liñas de traballo. Por unha banda, céntranse na suposta trama organizada para retirar multas a cambio de beneficios económicos, pola que xa foron detidas tres persoas e, por outra, a que afectaría a Otero e ao xefe provincial de Tráfico, Xullo González, as pescudas tratan de determinar se algunha sanción puido ser retirada a modo de favor.\nXullo González cesou hai uns días nun cargo que ocupaba desde 2005. Jesús Otero era subdelegado do Goberno en Lugo desde xullo de 2004.",
+    "context": "En calquera caso, fontes consultadas por AGN confirmaron que a imputación de Otero nesta investigación xudicial non está relacionada co caso da trama que supostamente operaba na Xefatura Provincial de Tráfico de Lugo para sacar multas a cambio de diñeiro. Eses mesmos informadores aclararon que as investigacións están a seguir dúas liñas de traballo. Por unha banda, céntranse na suposta trama organizada para retirar multas a cambio de beneficios económicos, pola que xa foron detidas tres persoas e, por outra, a que afectaría a Otero e ao xefe provincial de Tráfico, Xullo González, as pescudas tratan de determinar se algunha sanción puido ser retirada a modo de favor. Xullo González cesou hai uns días nun cargo que ocupaba desde 2005. Jesús Otero era subdelegado do Goberno en Lugo desde xullo de 2004.",
     "category": "politica",
     "context_replaced": true,
     "context_score": 0.6673,
