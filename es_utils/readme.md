@@ -1,4 +1,17 @@
-# Create ES container
+# Elasticsearch RAG Utils Documentation
+
+## Table of Contents
+
+1. [Create ES Container](#create-es-container)
+
+2. [Index Existing Datasets](#index-existing-datasets)
+
+3. [Adding a New Dataset](#adding-a-new-dataset)
+
+4. [Index Adapters scripts](#index-adapters)
+---
+
+# Create ES Container
 
 ## Step 1: Download Elastic docker image (if it is installed in the system, move to step 2)
 
